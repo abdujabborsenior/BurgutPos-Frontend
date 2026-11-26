@@ -46,7 +46,16 @@ interface RetriableConfig extends InternalAxiosRequestConfig {
 }
 
 http.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Nest serialises a `null` result as an EMPTY BODY, not as JSON `null`
+    // (`isNil(body)` → `res.send()`), and axios hands that back as `''`. The
+    // empty string passes both `=== undefined` and `=== null`, so a page that
+    // correctly handles "nothing here yet" rendered anyway and crashed on the
+    // first field it read. Normalised once, here, so every `| null` endpoint
+    // really delivers null — guarding per page would leave the next one open.
+    if (response.data === '') response.data = null;
+    return response;
+  },
   async (error: AxiosError<ApiErrorBody>) => {
     const config = error.config as RetriableConfig | undefined;
     const isAuthCall = AUTH_ENDPOINTS.some((path) => config?.url?.startsWith(path));

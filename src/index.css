@@ -1,0 +1,198 @@
+@import 'tailwindcss';
+
+/*
+ * BurgutPOS design tokens.
+ * Palette: deep indigo-navy brand on a cool, almost-white canvas.
+ * Semantic colours (success / warning / danger) are reserved for meaning:
+ * availability, alerts, destructive actions, money in/out.
+ */
+@theme {
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-brand-50: #f2f2fd;
+  --color-brand-100: #e6e6fb;
+  --color-brand-200: #cdcdf6;
+  --color-brand-300: #a9aaf0;
+  --color-brand-400: #8183e6;
+  --color-brand-500: #5e5fda;
+  --color-brand-600: #4443c6;
+  --color-brand-700: #3330a8;
+  --color-brand-800: #262387;
+  --color-brand-900: #1d1a6b;
+  --color-brand-950: #121048;
+
+  --color-ink-25: #fbfbfd;
+  --color-ink-50: #f4f5fa;
+  --color-ink-100: #eceef5;
+  --color-ink-150: #e4e6ef;
+  --color-ink-200: #d9dce8;
+  --color-ink-300: #c2c6d6;
+  /* 400–700 carry text: 500 (secondary text) stays above WCAG AA 4.5:1 on white. */
+  --color-ink-400: #878ca4;
+  --color-ink-500: #646983;
+  --color-ink-600: #4b5068;
+  --color-ink-700: #373b51;
+  --color-ink-800: #292c40;
+  --color-ink-900: #171a2e;
+  --color-ink-950: #0d0f21;
+
+  --color-success-50: #ecf8f2;
+  --color-success-100: #d2f0e1;
+  --color-success-200: #a6e0c3;
+  --color-success-500: #17a36b;
+  --color-success-600: #0f8a58;
+  --color-success-700: #0b6e46;
+
+  --color-warning-50: #fef7e8;
+  --color-warning-100: #fdecc6;
+  --color-warning-200: #fbd88b;
+  --color-warning-500: #e8930c;
+  --color-warning-600: #c47705;
+  --color-warning-700: #985a05;
+
+  /*
+   * POS board tiles. A busy table has to read across the room, so the two
+   * states that matter keep their own colours: green for an order eaten here
+   * (стол / зал), orange for one that leaves the venue (с собой / доставка).
+   */
+  --color-occupied-50: #e9f2f0;
+  --color-occupied-500: #246f5f;
+  --color-occupied-600: #1c5a4d;
+
+  --color-togo-50: #fdefe6;
+  --color-togo-500: #f16826;
+  --color-togo-600: #d4551a;
+
+  --color-danger-50: #fdf1f1;
+  --color-danger-100: #fbdddd;
+  --color-danger-200: #f6b9b9;
+  --color-danger-500: #e04848;
+  --color-danger-600: #c83535;
+  --color-danger-700: #a22828;
+
+  --shadow-card: 0 1px 2px rgb(18 16 72 / 0.04), 0 2px 10px -4px rgb(18 16 72 / 0.07);
+  --shadow-raised: 0 1px 2px rgb(18 16 72 / 0.05), 0 8px 24px -10px rgb(18 16 72 / 0.18);
+  --shadow-pop: 0 18px 48px -12px rgb(18 16 72 / 0.28), 0 2px 8px rgb(18 16 72 / 0.08);
+
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-scale-in: scale-in 160ms cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  --animate-slide-in-right: slide-in-right 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.97) translateY(4px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  body {
+    @apply bg-ink-50 text-ink-900;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-950;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  /* Native date inputs follow the theme. */
+  input[type='date']::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /*
+   * The one table look of the app: a framed box, a tinted header and a full
+   * grid — every row and every column separated by the same line, header,
+   * body and totals alike. A table is `<div class="table-frame"><table
+   * class="table-grid">`; cells add only padding, alignment and their own
+   * text colour, never lines — so no screen can drift from the others.
+   */
+  .table-frame {
+    overflow: hidden;
+    border: 1px solid var(--color-ink-200);
+    border-radius: var(--radius-lg);
+  }
+  .table-grid {
+    border-collapse: collapse;
+  }
+  .table-grid :is(th, td) {
+    border: 0 solid var(--color-ink-200);
+  }
+  /* Column lines. */
+  .table-grid :is(th, td) + :is(th, td) {
+    border-left-width: 1px;
+  }
+  /* Row lines: above every row but the table's first, across thead/tbody/tfoot. */
+  .table-grid > * > tr:not(:first-child) > :is(th, td),
+  .table-grid > :not(:first-child) > tr:first-child > :is(th, td) {
+    border-top-width: 1px;
+  }
+  .table-grid > thead > tr > th {
+    background: var(--color-ink-50);
+    color: var(--color-ink-800);
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-200) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--color-ink-200);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-ink-300);
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
